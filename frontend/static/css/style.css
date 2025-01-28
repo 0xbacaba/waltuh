@@ -48,6 +48,10 @@ button {
     animation: player-animation var(--transitions) ease;
     animation-fill-mode: forwards;
   }
+
+  &.marked {
+    box-shadow: 0 0 .4vmin .4vmin #00a7a7;
+  }
 }
 
 @keyframes player-animation {

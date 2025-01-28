@@ -1,19 +1,19 @@
 const MIN_PLAYERS = 3;
 const MAX_PLAYERS = 6;
 
-let elements;
+let elements: { [key: string]: HTMLElement };
 document.addEventListener("DOMContentLoaded", () => {
   elements = {
-    player_list: document.getElementById("player-list"),
-    add_player_button: document.getElementById("player-add"),
-    continue_button: document.getElementById("continue-button")
+    player_list: document.getElementById("player-list")!,
+    add_player_button: document.getElementById("player-add")!,
+    continue_button: document.getElementById("continue-button")!
   }
 });
 
 let current_round = 0;
 
 function add_player() {
-  let player_count = elements.player_list.children.length;
+  let player_count = elements.player_list?.children.length;
   let player = document.createElement("button");
   player.classList.add("player-button");
   player.onclick = () => player_pressed(player_count);
@@ -33,7 +33,7 @@ function add_player() {
   player.appendChild(input);
 
   if (player_count >= MIN_PLAYERS) {
-    elements.continue_button.style.opacity = 1;
+    elements.continue_button.style.opacity = "1";
   }
   if (player_count >= MAX_PLAYERS) {
     player.classList.add("last-player");
@@ -44,13 +44,26 @@ function add_player() {
 
   input.focus();
 }
-function player_pressed(player) {
+function player_pressed(player: number) {
   console.log(`player ${player} clicked`);
+}
+
+function randomInt(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min)) + min;
 }
 
 function continue_pressed() {
   if(current_round == 0) {
     elements.continue_button.textContent = "Weiter";
     elements.add_player_button.classList.add("hide-button");
+
+    let players = Array.from(elements.player_list.children);
+    players.splice(players.length - 1, 1); // remove add-player button from array
+
+    console.log(players.length);
+    let first_player = randomInt(0, players.length);
+    console.log(first_player);
+
+    players[first_player].classList.add("marked");
   }
 }
