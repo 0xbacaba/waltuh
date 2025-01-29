@@ -1,0 +1,57 @@
+#coin-pile {
+  width: 80vmin;
+  margin: 0 auto 0 auto;
+}
+
+.coin {
+  --x: 0vw;
+  --y: 0vw;
+
+  transition: var(--transitions);
+  position: absolute;
+
+  width: var(--coin-size);
+  height: var(--coin-size);
+  left: 50%;
+  top: 1vmin;
+
+  transform: translateX(-50%) translate(var(--x), var(--y));
+
+  background-image: url('../assets/coin.png');
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  &.hidden {
+    top: -100vh;
+  }
+
+  &.picked {
+    animation: picked-coin var(--transitions) ease;
+    animation-fill-mode: forwards;
+  }
+}
+
+.coin-stash {
+  position: absolute;
+
+  display: flex;
+  flex-direction: row;
+
+  width: var(--player-size);
+  height: var(--player-size);
+
+  &>* {
+    margin-bottom: calc(1vmin - var(--coin-size));
+  }
+}
+
+@keyframes picked-coin {
+  from {
+    transform: translateX(-50%) translate(var(--x), var(--y));
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}

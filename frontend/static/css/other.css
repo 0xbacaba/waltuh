@@ -1,0 +1,16 @@
+#buttons {
+  position: absolute;
+  width: 100%;
+  top: 60vh;
+}
+
+#continue-button {
+  width: 40vmin;
+  height: 10vmin;
+  margin: 5vmin auto auto auto;
+  border-radius: 1vmin;
+  font-size: 4vmin;
+  
+  transition: var(--transitions);
+  opacity: 0;
+}
