@@ -5,7 +5,7 @@ use actix_web::{App, HttpServer};
 async fn main() -> Result<(), std::io::Error> {
     HttpServer::new(|| {
         App::new()
-            .service(fs::Files::new("/", "./static")
+            .service(fs::Files::new("/", "./frontend/static")
                 .index_file("index.html"))
     })
     .bind(("0.0.0.0", 8080))?
