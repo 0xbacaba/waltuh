@@ -186,7 +186,9 @@ function move_coin_to_player(coin: HTMLElement, player: number) {
   new_coin.style.setProperty("--x", `${deltaX}px`);
   new_coin.style.setProperty("--y", `${deltaY}px`);
   new_coin.style.zIndex = `${parseInt(coin.style.zIndex) - 1}`;
-  new_coin.style.transition = "0";
+  let transition_time = get_transition_time();
+  new_coin.style.transition = "0s";
   new_coin.classList.add("picked");
+  setTimeout(() => new_coin.style.transition = `${transition_time}s`, transition_time * 1000);
   coin.remove();
 }
