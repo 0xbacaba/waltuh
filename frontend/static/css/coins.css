@@ -6,6 +6,7 @@
 .coin {
   --x: 0vw;
   --y: 0vw;
+  --number: 0;
 
   transition: var(--transitions);
   position: absolute;
@@ -49,9 +50,11 @@
 @keyframes picked-coin {
   from {
     transform: translateX(-50%) translate(var(--x), var(--y));
+    z-index: initial;
   }
 
   to {
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(calc(-2vmin - 2vmin * var(--number)));
+    z-index: calc(0 - var(--number));
   }
 }

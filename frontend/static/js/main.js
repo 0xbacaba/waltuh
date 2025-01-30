@@ -143,6 +143,12 @@ function parse_first_int(text) {
 function set_continue_button_text(text) {
     elements.continue_button.textContent = text;
 }
+function set_css_variable(element, variable, value) {
+    element.style.setProperty(variable, `${value}`);
+}
+function get_css_variable(element, variable) {
+    return getComputedStyle(element).getPropertyValue(variable);
+}
 function move_coin_to_player(coin, player) {
     let player_container = get_player_elements()[player];
     let coin_stash = player_container.querySelector(".coin-stash");
@@ -155,8 +161,9 @@ function move_coin_to_player(coin, player) {
     const rect0 = new_coin.getBoundingClientRect();
     const deltaX = rect1.left - rect0.left;
     const deltaY = rect1.bottom - rect0.bottom;
-    new_coin.style.setProperty("--x", `${deltaX}px`);
-    new_coin.style.setProperty("--y", `${deltaY}px`);
+    set_css_variable(new_coin, "--x", `${deltaX}px`);
+    set_css_variable(new_coin, "--y", `${deltaY}px`);
+    set_css_variable(new_coin, "--number", `${coin_stash.children.length}`);
     new_coin.style.zIndex = `${parseInt(coin.style.zIndex) - 1}`;
     let transition_time = get_transition_time();
     new_coin.style.transition = "0s";

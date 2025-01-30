@@ -7,9 +7,10 @@ function player_pressed(player) {
             errorGameNull();
         if (game.trickWon(player)) {
             console.log(`Player ${player} won a trick`);
-            let coin = get_player_elements()[player].querySelector(".coin.picked:not(.hidden)");
-            if (coin == null)
+            let coins = get_player_elements()[player].querySelectorAll(".coin.picked:not(.hidden)");
+            if (coins.length == 0)
                 return;
+            let coin = coins[coins.length - 1];
             remove_coin(coin);
         }
     }

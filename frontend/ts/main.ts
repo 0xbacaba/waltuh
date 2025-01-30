@@ -165,10 +165,16 @@ function set_continue_button_text(text: string) {
   elements.continue_button.textContent = text;
 }
 
+function set_css_variable(element: HTMLElement, variable: string, value: any) {
+  element.style.setProperty(variable, `${value}`);
+}
+function get_css_variable(element: HTMLElement, variable: string): string {
+  return getComputedStyle(element).getPropertyValue(variable);
+}
 
 function move_coin_to_player(coin: HTMLElement, player: number) {
   let player_container = get_player_elements()[player];
-  let coin_stash = player_container.querySelector(".coin-stash");
+  let coin_stash = player_container.querySelector(".coin-stash") as HTMLElement;
   if (coin_stash == null)
     errorPlayerMissingChild(player);
 
@@ -183,12 +189,15 @@ function move_coin_to_player(coin: HTMLElement, player: number) {
   const deltaX = rect1.left - rect0.left;
   const deltaY = rect1.bottom - rect0.bottom;
 
-  new_coin.style.setProperty("--x", `${deltaX}px`);
-  new_coin.style.setProperty("--y", `${deltaY}px`);
+  set_css_variable(new_coin, "--x", `${deltaX}px`);
+  set_css_variable(new_coin, "--y", `${deltaY}px`);
+  set_css_variable(new_coin, "--number", `${coin_stash.children.length}`);
   new_coin.style.zIndex = `${parseInt(coin.style.zIndex) - 1}`;
+
   let transition_time = get_transition_time();
   new_coin.style.transition = "0s";
   new_coin.classList.add("picked");
+
   setTimeout(() => new_coin.style.transition = `${transition_time}s`, transition_time * 1000);
   coin.remove();
 }

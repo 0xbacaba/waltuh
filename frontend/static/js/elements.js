@@ -40,7 +40,7 @@ function create_coin(offsetX, offsetY, onclick) {
     coin.classList.add("coin", "hidden");
     coin.onclick = onclick;
     coin.style.zIndex = `-${elements.coin_pile.children.length}`;
-    coin.style.setProperty('--x', `${offsetX}vw`);
-    coin.style.setProperty('--y', `${offsetY}vh`);
+    set_css_variable(coin, '--x', `${offsetX}vw`);
+    set_css_variable(coin, '--y', `${offsetY}vh`);
     return coin;
 }
