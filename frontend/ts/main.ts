@@ -51,14 +51,23 @@ function get_player_elements(): Element[] {
 
   return players;
 }
-function get_player_button_element(player: number): Element {
+function get_player_button_element(player: number): HTMLElement {
   let player_element = get_player_elements()[player];
   if (player_element == undefined)
     errorPlayerMissingChild(player);
   let player_button = player_element.querySelector(".player-button")
   if (player_button == null)
     errorPlayerMissingChild(player);
-  return player_button;
+  return player_button as HTMLElement;
+}
+function get_player_points_element(player: number): HTMLElement {
+  let player_element = get_player_elements()[player];
+  if(player_element == undefined)
+    errorPlayerMissingChild(player);
+  let player_points = player_element.querySelector(".point-display");
+  if(player_points == null)
+    errorPlayerMissingChild(player);
+  return player_points as HTMLElement;
 }
 function mark_player(player: number) {
   let players = get_player_elements();
@@ -74,11 +83,9 @@ function get_marked_player(): number | -1 {
   let players = get_player_elements();
 
   for (let i = 0; i < players.length; i++) {
-    let classList = players[i].lastElementChild?.classList;
-    if (classList == undefined)
-      errorPlayerMissingChild(i);
+    let player_button = get_player_button_element(i);
 
-    if (classList.contains("marked"))
+    if (player_button.classList.contains("marked"))
       return i;
   }
 
@@ -103,6 +110,13 @@ function switch_state(new_state: GameState) {
         game = new Game(get_player_elements().length);
       else
         game.nextRound();
+      let points = game.getPoints();
+
+      for(let i = 0; i < points.length; i++) {
+        let points_element = get_player_points_element(i);
+        points_element.textContent = `${points[i] * 10}`;
+      }
+
       mark_player(game.getStartingPlayer());
       create_coin_pile();
       remove_picked_coins();

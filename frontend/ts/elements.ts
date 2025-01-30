@@ -31,7 +31,6 @@ function create_player(onclick: EventHandler): {player: HTMLElement, input: HTML
 
   let coin_stash = document.createElement("div");
   coin_stash.classList.add("coin-stash");
-
   player.appendChild(coin_stash);
 
   let player_button = document.createElement("button");
@@ -42,6 +41,16 @@ function create_player(onclick: EventHandler): {player: HTMLElement, input: HTML
   player_button.appendChild(input);
 
   player.appendChild(player_button);
+
+  let point_info = document.createElement("div");
+  point_info.classList.add("horizontal");
+
+  let point_text = document.createElement("div");
+  point_text.classList.add("point-display");
+  point_info.appendChild(point_text);
+
+  player.appendChild(point_info);
+
   return {player: player, input: input};
 }
 

@@ -33,6 +33,12 @@ function create_player(onclick) {
     let input = create_player_name_input((value) => player_button.textContent = value);
     player_button.appendChild(input);
     player.appendChild(player_button);
+    let point_info = document.createElement("div");
+    point_info.classList.add("horizontal");
+    let point_text = document.createElement("div");
+    point_text.classList.add("point-display");
+    point_info.appendChild(point_text);
+    player.appendChild(point_info);
     return { player: player, input: input };
 }
 function create_coin(offsetX, offsetY, onclick) {

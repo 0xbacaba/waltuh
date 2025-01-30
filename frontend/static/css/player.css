@@ -1,5 +1,5 @@
 #player-list {
-  height: calc(var(--player-size) + 2vmin);
+  height: calc(var(--player-size) + 7vmin);
   margin: 1vmin auto 1vmin auto;
   padding: 0vmin 1vmin 0vmin 1vmin;
 
@@ -79,4 +79,11 @@
     opacity: 0;
     visibility: hidden;
   }
+}
+
+
+.point-display {
+  font: 3vmin Arial;
+  color: white;
+  margin: 0 auto 0 auto;
 }

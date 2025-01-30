@@ -55,6 +55,15 @@ function get_player_button_element(player) {
         errorPlayerMissingChild(player);
     return player_button;
 }
+function get_player_points_element(player) {
+    let player_element = get_player_elements()[player];
+    if (player_element == undefined)
+        errorPlayerMissingChild(player);
+    let player_points = player_element.querySelector(".point-display");
+    if (player_points == null)
+        errorPlayerMissingChild(player);
+    return player_points;
+}
 function mark_player(player) {
     let players = get_player_elements();
     if (player >= players.length || player < 0)
@@ -65,13 +74,10 @@ function mark_player(player) {
     get_player_button_element(player).classList.add("marked");
 }
 function get_marked_player() {
-    var _a;
     let players = get_player_elements();
     for (let i = 0; i < players.length; i++) {
-        let classList = (_a = players[i].lastElementChild) === null || _a === void 0 ? void 0 : _a.classList;
-        if (classList == undefined)
-            errorPlayerMissingChild(i);
-        if (classList.contains("marked"))
+        let player_button = get_player_button_element(i);
+        if (player_button.classList.contains("marked"))
             return i;
     }
     return -1;
@@ -91,6 +97,11 @@ function switch_state(new_state) {
                 game = new Game(get_player_elements().length);
             else
                 game.nextRound();
+            let points = game.getPoints();
+            for (let i = 0; i < points.length; i++) {
+                let points_element = get_player_points_element(i);
+                points_element.textContent = `${points[i] * 10}`;
+            }
             mark_player(game.getStartingPlayer());
             create_coin_pile();
             remove_picked_coins();
