@@ -9,6 +9,7 @@ RUN ls && cargo build --release
 FROM node:alpine3.20 as tscbuilder
 WORKDIR /app
 COPY frontend ./frontend
+RUN npm install typescript
 RUN cd frontend && npx tsc
 
 FROM debian:bookworm-slim
