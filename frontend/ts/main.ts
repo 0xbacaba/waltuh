@@ -108,17 +108,18 @@ function random(min: number, max: number) {
 function switch_state(new_state: GameState) {
   switch (new_state) {
     case GameState.CREATING_PLAYERS:
-      set_continue_button_text(DISPLAYED_TEXT.CONTINUE_BUTTON.START_GAME);
+      set_continue_button_text(DISPLAYED_TEXT.CONTINUE_BUTTON.START_GAME());
 
       game = null;
       break;
     case GameState.PICKING_COINS:
-      set_continue_button_text(DISPLAYED_TEXT.CONTINUE_BUTTON.START_ROUND);
-
       if (game == null)
         game = new Game(get_player_elements().length);
       else
         game.nextRound();
+
+      set_continue_button_text(DISPLAYED_TEXT.CONTINUE_BUTTON.START_ROUND(game.getCurrentRound()));
+
       let points = game.getPoints();
 
       for(let i = 0; i < points.length; i++) {
@@ -131,7 +132,7 @@ function switch_state(new_state: GameState) {
       remove_picked_coins();
       break;
     case GameState.PLAYING_ROUND:
-      set_continue_button_text(DISPLAYED_TEXT.CONTINUE_BUTTON.END_ROUND);
+      set_continue_button_text(DISPLAYED_TEXT.CONTINUE_BUTTON.END_ROUND());
 
       remove_coin_pile();
       break;

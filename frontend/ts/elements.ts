@@ -1,8 +1,8 @@
 const DISPLAYED_TEXT = {
   CONTINUE_BUTTON: {
-    START_GAME: "Spiel starten",
-    START_ROUND: "Runde starten",
-    END_ROUND: "Runde beenden",
+    START_GAME: () => "Spiel starten",
+    START_ROUND: (round: number) => `Runde ${round} starten`,
+    END_ROUND: () => "Runde beenden",
   },
 };
 
