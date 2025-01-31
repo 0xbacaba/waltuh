@@ -1,0 +1,12 @@
+{
+	"display": "standalone",
+	"short_name": "Waltuh",
+	"icons": [
+		{
+			"src": "assets/icon192.ico",
+			"sizes": "192x192",
+			"type": "image/x-icon",
+			"purpose": "maskable any"
+		}
+	]
+}
