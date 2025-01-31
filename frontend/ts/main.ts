@@ -165,9 +165,7 @@ function remove_picked_coins() {
 }
 function remove_coin(coin: Element) {
   coin.classList.add("hidden")
-  setTimeout(() => {
-    coin.remove();
-  }, get_transition_time() * 1000);
+  setTimeout(() => coin.remove(), get_transition_time() * 1000);
 }
 
 function get_transition_time(): number {

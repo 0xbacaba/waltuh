@@ -76,7 +76,7 @@ function create_picked_coin(player: number, onclick: EventHandler): HTMLElement 
   coin.style.transition = "0s";
   coin.classList.add("picked");
 
-  setTimeout(() => coin.style.transition = `${transition_time}s`, transition_time * 1000);
+  setTimeout(() => coin.style.transition = "var(--transitions)", transition_time * 1000);
 
   return coin;
 }
