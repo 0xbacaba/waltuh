@@ -45,6 +45,12 @@ class Game {
     this.tricks_won[player]++;
     return true;
   }
+  public trickLost(player: number): boolean {
+    if(this.tricks_won[player] <= 0)
+      return false;
+    this.tricks_won[player]--;
+    return true;
+  }
   public getTricksWon(player: number): number  {
     return this.tricks_won[player];
   }

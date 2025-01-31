@@ -69,6 +69,15 @@ function get_player_points_element(player: number): HTMLElement {
     errorPlayerMissingChild(player);
   return player_points as HTMLElement;
 }
+function get_player_coin_stash_element(player: number): HTMLElement {
+  let player_element = get_player_elements()[player];
+  if(player_element == undefined)
+    errorPlayerMissingChild(player);
+  let player_coin_stash = player_element.querySelector(".coin-stash");
+  if(player_coin_stash == null)
+    errorPlayerMissingChild(player);
+  return player_coin_stash as HTMLElement;
+}
 function mark_player(player: number) {
   let players = get_player_elements();
   if (player >= players.length || player < 0)
@@ -140,6 +149,7 @@ function create_coin_pile() {
 
   for (let i = 0; i < amount_coins; i++) {
     let coin = create_coin(random(COIN_OFFSETS.MIN_X, COIN_OFFSETS.MAX_X), random(COIN_OFFSETS.MIN_Y, COIN_OFFSETS.MAX_Y), coin_pressed);
+    coin.classList.add("hidden");
     elements.coin_pile.appendChild(coin);
     setTimeout(() => {
       coin.classList.remove("hidden");
@@ -150,7 +160,7 @@ function remove_coin_pile() {
   document.querySelectorAll("#coin-pile>.coin").forEach(remove_coin);
 }
 function remove_picked_coins() {
-  document.querySelectorAll(".coin.picked").forEach(remove_coin);
+  document.querySelectorAll(".coin-stash>.coin").forEach(remove_coin);
 }
 function remove_coin(coin: Element) {
   coin.classList.add("hidden")
@@ -186,32 +196,27 @@ function get_css_variable(element: HTMLElement, variable: string): string {
   return getComputedStyle(element).getPropertyValue(variable);
 }
 
-function move_coin_to_player(coin: HTMLElement, player: number) {
-  let player_container = get_player_elements()[player];
-  let coin_stash = player_container.querySelector(".coin-stash") as HTMLElement;
-  if (coin_stash == null)
-    errorPlayerMissingChild(player);
-
+function calculate_coin_offset_to_player(coin: HTMLElement, picked_coin: HTMLElement): {deltaX: number, deltaY: number} {
   const rect1 = coin.getBoundingClientRect();
 
-  let new_coin = create_coin(0, 0, () => { });
-  new_coin.classList.remove("hidden");
-  coin_stash.appendChild(new_coin);
-
-  const rect0 = new_coin.getBoundingClientRect()
+  const rect0 = picked_coin.getBoundingClientRect()
 
   const deltaX = rect1.left - rect0.left;
   const deltaY = rect1.bottom - rect0.bottom;
 
+  return {deltaX, deltaY};
+}
+function move_coin_to_player(coin: HTMLElement, player: number) {
+  let coin_stash = get_player_coin_stash_element(player);
+
+  let new_coin = create_picked_coin(player, picked_coin_pressed);
+  coin_stash.appendChild(new_coin);
+
+  let {deltaX, deltaY} = calculate_coin_offset_to_player(coin, new_coin);
+
   set_css_variable(new_coin, "--x", `${deltaX}px`);
   set_css_variable(new_coin, "--y", `${deltaY}px`);
-  set_css_variable(new_coin, "--number", `${coin_stash.children.length}`);
   new_coin.style.zIndex = `${parseInt(coin.style.zIndex) - 1}`;
 
-  let transition_time = get_transition_time();
-  new_coin.style.transition = "0s";
-  new_coin.classList.add("picked");
-
-  setTimeout(() => new_coin.style.transition = `${transition_time}s`, transition_time * 1000);
   coin.remove();
 }

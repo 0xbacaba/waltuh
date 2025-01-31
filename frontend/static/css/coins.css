@@ -23,13 +23,21 @@
   background-repeat: no-repeat;
   background-position: center;
 
-  &.hidden {
-    top: -100vh;
-  }
-
   &.picked {
     animation: picked-coin var(--transitions) ease;
     animation-fill-mode: forwards;
+  }
+
+  &.won {
+    top: -40vh;
+  }
+
+  &.ghost {
+    opacity: 0.5;
+  }
+
+  &.hidden {
+    top: -100vh !important;
   }
 }
 

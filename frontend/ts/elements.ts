@@ -56,12 +56,27 @@ function create_player(onclick: EventHandler): {player: HTMLElement, input: HTML
 
 function create_coin(offsetX: number, offsetY: number, onclick: EventHandler): HTMLElement {
   let coin = document.createElement("div");
-  coin.classList.add("coin", "hidden");
+  coin.classList.add("coin");
   coin.onclick = onclick;
 
   coin.style.zIndex = `-${elements.coin_pile.children.length}`;
   set_css_variable(coin, '--x', `${offsetX}vw`);
   set_css_variable(coin, '--y', `${offsetY}vh`);
+
+  return coin;
+}
+function create_picked_coin(player: number, onclick: EventHandler): HTMLElement {
+  let coin_stash = get_player_coin_stash_element(player);
+  let coin = create_coin(0, 0, onclick);
+
+  set_css_variable(coin, "--number", coin_stash.children.length);
+  set_css_variable(coin, "--picked-by", player);
+
+  let transition_time = get_transition_time();
+  coin.style.transition = "0s";
+  coin.classList.add("picked");
+
+  setTimeout(() => coin.style.transition = `${transition_time}s`, transition_time * 1000);
 
   return coin;
 }
