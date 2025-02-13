@@ -1,12 +1,12 @@
-FROM rust:1.84 as cargobuilder
+FROM rust:1.84 AS cargobuilder
 
 WORKDIR /app
 
 COPY src/ ./src/
 COPY Cargo.lock Cargo.toml ./
-RUN ls && cargo build --release
+RUN cargo build --release
 
-FROM node:alpine3.20 as tscbuilder
+FROM node:alpine3.20 AS tscbuilder
 WORKDIR /app
 RUN npm install typescript
 COPY frontend ./frontend
