@@ -1,6 +1,17 @@
 function player_pressed(player: number) {
-  if (current_state == GameState.PICKING_COINS)
-    mark_player(player);
+  if (current_state == GameState.PICKING_COINS) {
+    let marked_player = get_marked_player();
+    if(marked_player != player) {
+      mark_player(player);
+      return;
+    }
+
+    if(game == null)
+      errorGameNull();
+
+    if(game.unpickedCoin(player))
+      remove_coin_from_player(player);
+  }
   if (current_state == GameState.PLAYING_ROUND) {
     if (game == null)
       errorGameNull();

@@ -176,7 +176,7 @@ function get_transition_time(): number {
 }
 
 function parse_first_int(text: string): number {
-  let digits = text.match(/\d+/)
+  let digits = text.match(/-?\d+/)
   if (digits == null)
     return 0;
   if (digits.length > 0)
@@ -213,9 +213,31 @@ function move_coin_to_player(coin: HTMLElement, player: number) {
 
   let {deltaX, deltaY} = calculate_coin_offset_to_player(coin, new_coin);
 
+  set_css_variable(new_coin, "--prev-x", `${get_css_variable(coin, "--x")}`);
+  set_css_variable(new_coin, "--prev-y", `${get_css_variable(coin, "--y")}`);
   set_css_variable(new_coin, "--x", `${deltaX}px`);
   set_css_variable(new_coin, "--y", `${deltaY}px`);
   new_coin.style.zIndex = `${parseInt(coin.style.zIndex) - 1}`;
 
   coin.remove();
+}
+function remove_coin_from_player(player: number) {
+  let coin_stash = get_player_coin_stash_element(player);
+
+  let picked_coins = coin_stash.querySelectorAll("div.coin:not(.unpicked)");
+  if(picked_coins.length == 0)
+    return;
+
+  let removed_coin = picked_coins[picked_coins.length - 1] as HTMLElement;
+
+  removed_coin.classList.add("unpicked");
+
+  setTimeout(() => {
+    let prev_x = parse_first_int(get_css_variable(removed_coin, "--prev-x"));
+    let prev_y = parse_first_int(get_css_variable(removed_coin, "--prev-y"));
+    let coin = create_coin(prev_x, prev_y, coin_pressed);
+    elements.coin_pile.appendChild(coin);
+
+    removed_coin.remove();
+  }, get_transition_time() * 1000);
 }

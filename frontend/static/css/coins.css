@@ -27,6 +27,10 @@
     animation: picked-coin var(--transitions) ease;
     animation-fill-mode: forwards;
   }
+  &.unpicked {
+    animation: unpicked-coin var(--transitions) ease;
+    animation-fill-mode: forwards;
+  }
 
   &.won {
     top: -40vh;
@@ -64,5 +68,16 @@
   to {
     transform: translateX(-50%) translateY(calc(-2vmin - 2vmin * var(--number)));
     z-index: calc(0 - var(--number));
+  }
+}
+@keyframes unpicked-coin {
+  from {
+    transform: translateX(-50%) translateY(calc(-2vmin - 2vmin * var(--number)));
+    z-index: calc(0 - var(--number));
+  }
+
+  to {
+    transform: translateX(-50%) translate(var(--x), var(--y));
+    z-index: initial;
   }
 }
