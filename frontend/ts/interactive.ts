@@ -105,7 +105,15 @@ function continue_pressed() {
         console.log("cannot continue yet");
         return;
       }
+      if(game.getPlayerAmount() * (game.getCurrentRound() + 1) > AMOUNT_CARDS) {
+        switch_state(GameState.GAME_END);
+        return;
+      }
+
       switch_state(GameState.PICKING_COINS);
+      break;
+    case GameState.GAME_END:
+      switch_state(GameState.CREATING_PLAYERS);
       break;
   }
 }

@@ -1,5 +1,6 @@
 const MIN_PLAYERS = 3;
 const MAX_PLAYERS = 6;
+const AMOUNT_CARDS = 61;
 
 const COIN_OFFSETS = {
   MIN_X: -40,
@@ -12,6 +13,7 @@ enum GameState {
   CREATING_PLAYERS,
   PICKING_COINS,
   PLAYING_ROUND,
+  GAME_END
 }
 
 let current_state: GameState;
@@ -21,7 +23,6 @@ let elements: { [key: string]: HTMLElement };
 document.addEventListener("DOMContentLoaded", () => {
   elements = {
     player_list: document.getElementById("player-list")!,
-    add_player_button: document.getElementById("player-add")!,
     continue_button: document.getElementById("continue-button")!,
     coin_pile: document.getElementById("coin-pile")!
   }
@@ -31,17 +32,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function add_player() {
   let player_count = elements.player_list?.children.length;
-  let { player, input } = create_player(() => player_pressed(player_count - 1));
+  let { player, input, button } = create_player(() => player_pressed(player_count - 1));
 
-  if (player_count >= MIN_PLAYERS) {
+  if (player_count >= MIN_PLAYERS)
     elements.continue_button.style.opacity = "1";
-  }
   if (player_count >= MAX_PLAYERS) {
-    player.classList.add("last-player");
+    button.classList.add("last-player");
     elements.player_list.replaceChild(player, elements.add_player_button);
-  } else {
+  } else
     elements.player_list.insertBefore(player, elements.add_player_button);
-  }
 
   input.focus();
 }
@@ -111,21 +110,22 @@ function switch_state(new_state: GameState) {
       set_continue_button_text(DISPLAYED_TEXT.CONTINUE_BUTTON.START_GAME());
 
       game = null;
+      
+      document.querySelectorAll("#player-list>.player").forEach(player => player.remove());
+      elements.continue_button.style.opacity = "0";
+
+      let add_button = create_player_add_button();
+      elements.player_list.appendChild(add_button);
+      elements.add_player_button = add_button;
+
       break;
     case GameState.PICKING_COINS:
       if (game == null)
         game = new Game(get_player_elements().length);
       else
-        game.nextRound();
+        applyPoints();
 
       set_continue_button_text(DISPLAYED_TEXT.CONTINUE_BUTTON.START_ROUND(game.getCurrentRound()));
-
-      let points = game.getPoints();
-
-      for(let i = 0; i < points.length; i++) {
-        let points_element = get_player_points_element(i);
-        points_element.textContent = `${points[i] * 10}`;
-      }
 
       mark_player(game.getStartingPlayer());
       create_coin_pile();
@@ -136,9 +136,27 @@ function switch_state(new_state: GameState) {
 
       remove_coin_pile();
       break;
+    case GameState.GAME_END:
+      set_continue_button_text(DISPLAYED_TEXT.CONTINUE_BUTTON.RESTART_GAME());
+
+      applyPoints();
+      remove_coin_pile();
+      remove_picked_coins();
+      break;
   }
 
   current_state = new_state;
+}
+function applyPoints() {
+  if(game == null)
+    errorGameNull();
+
+  game.nextRound();
+  let points = game.getPoints();
+  for(let i = 0; i < points.length; i++) {
+    let points_element = get_player_points_element(i);
+    points_element.textContent = `${points[i] * 10}`;
+  }
 }
 
 function create_coin_pile() {

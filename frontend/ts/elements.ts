@@ -3,11 +3,22 @@ const DISPLAYED_TEXT = {
     START_GAME: () => "Spiel starten",
     START_ROUND: (round: number) => `Runde ${round} starten`,
     END_ROUND: () => "Runde beenden",
+    RESTART_GAME: () => "Neues Spiel",
   },
 };
 
 
 type EventHandler = ((this: GlobalEventHandlers, ev: MouseEvent) => any);
+
+function create_player_add_button(): HTMLButtonElement {
+  let button = document.createElement("button") as HTMLButtonElement;
+  button.id = "player-add";
+  button.classList.add("player-button");
+  button.onclick = add_player;
+  button.textContent = "+";
+
+  return button;
+}
 
 function create_player_name_input(value_handler: ((value: string) => any)): HTMLInputElement {
   let input = document.createElement("input");
@@ -25,7 +36,7 @@ function create_player_name_input(value_handler: ((value: string) => any)): HTML
 
   return input;
 }
-function create_player(onclick: EventHandler): {player: HTMLElement, input: HTMLInputElement} {
+function create_player(onclick: EventHandler): {player: HTMLElement, input: HTMLInputElement, button: HTMLButtonElement} {
   let player = document.createElement("div");
   player.classList.add("player");
 
@@ -51,7 +62,7 @@ function create_player(onclick: EventHandler): {player: HTMLElement, input: HTML
 
   player.appendChild(point_info);
 
-  return {player: player, input: input};
+  return {player: player, input: input, button: (player_button as HTMLButtonElement)};
 }
 
 function create_coin(offsetX: number, offsetY: number, onclick: EventHandler): HTMLElement {

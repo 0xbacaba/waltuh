@@ -88,4 +88,7 @@ class Game {
   public getPoints(): number[] {
     return this.points;
   }
+  public getPlayerAmount(): number {
+    return this.player_amount;
+  }
 }
