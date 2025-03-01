@@ -1,6 +1,8 @@
 use actix_files as fs;
 use actix_web::{App, HttpServer};
 
+mod game;
+
 #[actix_web::main]
 async fn main() -> Result<(), std::io::Error> {
     HttpServer::new(|| {
