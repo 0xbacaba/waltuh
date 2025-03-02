@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "a player has picked a coin",
+  "type": "object",
+  "properties": {
+    "name": {
+      "const": "pick_coin"
+    },
+    "player": {
+      "type": "integer",
+      "description": "the index of the player",
+      "minimum": 0
+    }
+  },
+  "required": ["player"]
+}

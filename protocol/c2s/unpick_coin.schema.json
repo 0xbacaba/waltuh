@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "undo a pick_coin",
+  "type": "object",
+  "properties": {
+    "name": {
+      "const": "unpick_coin"
+    },
+    "player": {
+      "type": "integer",
+      "description": "the index of the player",
+      "minimum": 0
+    }
+  },
+  "required": ["player"]
+}

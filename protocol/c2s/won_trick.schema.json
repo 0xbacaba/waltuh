@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "a player has won a trick",
+  "type": "object",
+  "properties": {
+    "name": {
+      "const": "won_trick"
+    },
+    "player": {
+      "type": "integer",
+      "description": "the index of the player",
+      "minimum": 0
+    }
+  },
+  "required": ["player"]
+}

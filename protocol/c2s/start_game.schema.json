@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "start a game",
+  "type": "object",
+  "properties": {
+    "name": {
+      "const": "start_game"
+    },
+    "players": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": ["players"]
+}
