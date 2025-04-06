@@ -14,3 +14,13 @@
   transition: var(--transitions);
   opacity: 0;
 }
+
+#chart {
+  width: 80vw;
+  height: 0;
+  margin: 0 auto;
+
+  &.active {
+    height: 40vh;
+  }
+}
