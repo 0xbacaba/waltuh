@@ -4,12 +4,8 @@
   width: 100%;
   top: 60vh;
 
-  &.chart-displayed {
-    top: 80vh;
-
-    &>*>*>.player>.player-button {
-      box-shadow: 0 0 .4vmin .4vmin var(--player-color);
-    }
+  &.chart-displayed>*>*>.player>.player-button {
+    box-shadow: 0 0 .4vmin .4vmin var(--player-color);
   }
 }
 

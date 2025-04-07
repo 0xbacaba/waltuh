@@ -131,6 +131,8 @@ function switch_state(new_state: GameState) {
       document.querySelectorAll("#player-list>.player").forEach(player => player.remove());
       elements.continue_button.style.opacity = "0";
 
+      elements.chart.classList.remove("chart-displayed");
+
       let add_button = create_player_add_button();
       elements.player_list.appendChild(add_button);
       elements.add_player_button = add_button;
