@@ -8,6 +8,14 @@ const COIN_OFFSETS = {
   MIN_Y: 2,
   MAX_Y: 30
 };
+const PLAYER_COLORS = [
+  "#18f4ed",
+  "#1823f4",
+  "#40f418",
+  "#f46c18",
+  "#f4e918",
+  "#f418cc",
+];
 
 enum GameState {
   CREATING_PLAYERS,
@@ -19,12 +27,21 @@ enum GameState {
 let current_state: GameState;
 let game: Game | null;
 
-let elements: { [key: string]: HTMLElement };
+let elements: {
+  player_list: HTMLElement,
+  buttons: HTMLElement,
+  continue_button: HTMLElement,
+  coin_pile: HTMLElement,
+  chart: HTMLCanvasElement,
+  add_player_button?: HTMLElement,
+};
 document.addEventListener("DOMContentLoaded", () => {
   elements = {
     player_list: document.getElementById("player-list")!,
+    buttons: document.getElementById("buttons")!,
     continue_button: document.getElementById("continue-button")!,
-    coin_pile: document.getElementById("coin-pile")!
+    coin_pile: document.getElementById("coin-pile")!,
+    chart: document.getElementById("chart") as HTMLCanvasElement,
   }
 
   switch_state(GameState.CREATING_PLAYERS);
@@ -38,9 +55,9 @@ function add_player() {
     elements.continue_button.style.opacity = "1";
   if (player_count >= MAX_PLAYERS) {
     button.classList.add("last-player");
-    elements.player_list.replaceChild(player, elements.add_player_button);
+    elements.player_list.replaceChild(player, elements.add_player_button!);
   } else
-    elements.player_list.insertBefore(player, elements.add_player_button);
+    elements.player_list.insertBefore(player, elements.add_player_button!);
 
   input.focus();
 }
@@ -61,19 +78,19 @@ function get_player_button_element(player: number): HTMLElement {
 }
 function get_player_points_element(player: number): HTMLElement {
   let player_element = get_player_elements()[player];
-  if(player_element == undefined)
+  if (player_element == undefined)
     errorPlayerMissingChild(player);
   let player_points = player_element.querySelector(".point-display");
-  if(player_points == null)
+  if (player_points == null)
     errorPlayerMissingChild(player);
   return player_points as HTMLElement;
 }
 function get_player_coin_stash_element(player: number): HTMLElement {
   let player_element = get_player_elements()[player];
-  if(player_element == undefined)
+  if (player_element == undefined)
     errorPlayerMissingChild(player);
   let player_coin_stash = player_element.querySelector(".coin-stash");
-  if(player_coin_stash == null)
+  if (player_coin_stash == null)
     errorPlayerMissingChild(player);
   return player_coin_stash as HTMLElement;
 }
@@ -110,7 +127,7 @@ function switch_state(new_state: GameState) {
       set_continue_button_text(DISPLAYED_TEXT.CONTINUE_BUTTON.START_GAME());
 
       game = null;
-      
+
       document.querySelectorAll("#player-list>.player").forEach(player => player.remove());
       elements.continue_button.style.opacity = "0";
 
@@ -142,18 +159,20 @@ function switch_state(new_state: GameState) {
       applyPoints();
       remove_coin_pile();
       remove_picked_coins();
+
+      displayChart();
       break;
   }
 
   current_state = new_state;
 }
 function applyPoints() {
-  if(game == null)
+  if (game == null)
     errorGameNull();
 
   game.nextRound();
   let points = game.getPoints();
-  for(let i = 0; i < points.length; i++) {
+  for (let i = 0; i < points.length; i++) {
     let points_element = get_player_points_element(i);
     points_element.textContent = `${points[i] * 10}`;
   }
@@ -213,7 +232,7 @@ function get_css_variable(element: HTMLElement, variable: string): string {
   return getComputedStyle(element).getPropertyValue(variable);
 }
 
-function calculate_coin_offset_to_player(coin: HTMLElement, picked_coin: HTMLElement): {deltaX: number, deltaY: number} {
+function calculate_coin_offset_to_player(coin: HTMLElement, picked_coin: HTMLElement): { deltaX: number, deltaY: number } {
   const rect1 = coin.getBoundingClientRect();
 
   const rect0 = picked_coin.getBoundingClientRect()
@@ -221,7 +240,7 @@ function calculate_coin_offset_to_player(coin: HTMLElement, picked_coin: HTMLEle
   const deltaX = rect1.left - rect0.left;
   const deltaY = rect1.bottom - rect0.bottom;
 
-  return {deltaX, deltaY};
+  return { deltaX, deltaY };
 }
 function move_coin_to_player(coin: HTMLElement, player: number) {
   let coin_stash = get_player_coin_stash_element(player);
@@ -229,7 +248,7 @@ function move_coin_to_player(coin: HTMLElement, player: number) {
   let new_coin = create_picked_coin(player, picked_coin_pressed);
   coin_stash.appendChild(new_coin);
 
-  let {deltaX, deltaY} = calculate_coin_offset_to_player(coin, new_coin);
+  let { deltaX, deltaY } = calculate_coin_offset_to_player(coin, new_coin);
 
   set_css_variable(new_coin, "--prev-x", `${get_css_variable(coin, "--x")}`);
   set_css_variable(new_coin, "--prev-y", `${get_css_variable(coin, "--y")}`);
@@ -243,7 +262,7 @@ function remove_coin_from_player(player: number) {
   let coin_stash = get_player_coin_stash_element(player);
 
   let picked_coins = coin_stash.querySelectorAll("div.coin:not(.unpicked)");
-  if(picked_coins.length == 0)
+  if (picked_coins.length == 0)
     return;
 
   let removed_coin = picked_coins[picked_coins.length - 1] as HTMLElement;
@@ -258,4 +277,29 @@ function remove_coin_from_player(player: number) {
 
     removed_coin.remove();
   }, get_transition_time() * 1000);
+}
+function displayChart() {
+  if (game == null || game == undefined)
+    errorGameNull();
+
+  let rounds = game.getPreviousRounds();
+  let datasets = new Array<Dataset>(game.getPlayerAmount());
+  for (let i = 0; i < game.getPlayerAmount(); i++) {
+    let player = get_player_button_element(i);
+    set_css_variable(player, "--player-color", PLAYER_COLORS[i]);
+    datasets[i] = { style: PLAYER_COLORS[i], data: [] };
+
+    let points = 0;
+    for (let j = 0; j < rounds.length; j++) {
+      datasets[i].data.push(points);
+      points += rounds[j].getPoints()[i];
+    }
+    datasets[i].data.push(points);
+  }
+
+  console.log(datasets);
+  elements.chart.classList.add("chart-displayed");
+  elements.buttons.classList.add("chart-displayed");
+  let chart = new Chart(datasets, { padding: new Sides(10) });
+  chart.draw(elements.chart);
 }

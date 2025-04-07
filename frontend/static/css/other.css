@@ -1,7 +1,16 @@
 #buttons {
   position: absolute;
+  transition: var(--transitions);
   width: 100%;
   top: 60vh;
+
+  &.chart-displayed {
+    top: 80vh;
+
+    &>*>*>.player>.player-button {
+      box-shadow: 0 0 .4vmin .4vmin var(--player-color);
+    }
+  }
 }
 
 #continue-button {
@@ -20,7 +29,7 @@
   height: 0;
   margin: 0 auto;
 
-  &.active {
+  &.chart-displayed {
     height: 40vh;
   }
 }

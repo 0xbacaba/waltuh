@@ -114,12 +114,14 @@ class Round {
     if(tricks_won == picked_coins)
       return tricks_won + 2;
     else
-      return Math.abs(this.tricks_won[player] - picked_coins);
+      return tricks_won - Math.abs(tricks_won - picked_coins);
   }
   public complete(): number[] {
     for(let i = 0; i < this.player_amount; i++) {
       this.points[i] = this.calculatePointsForPlayer(i);
     }
+    console.log("round complete:");
+    console.log({ player_amount: this.player_amount, points: this.points });
     return this.points;
   }
 

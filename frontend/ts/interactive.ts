@@ -85,7 +85,7 @@ function picked_coin_pressed(this: GlobalEventHandlers, ev: MouseEvent) {
 function continue_pressed() {
   switch (current_state) {
     case GameState.CREATING_PLAYERS:
-      elements.add_player_button.classList.add("hide-button");
+      elements.add_player_button!.classList.add("hide-button");
 
       switch_state(GameState.PICKING_COINS);
       break;
