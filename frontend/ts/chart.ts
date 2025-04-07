@@ -1,5 +1,4 @@
 type Dataset = {
-  label: string,
   style: string | CanvasPattern | CanvasGradient,
   data: number[],
 };
