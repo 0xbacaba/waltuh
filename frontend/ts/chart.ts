@@ -78,7 +78,7 @@ class Chart {
   public getOptions() {
     const dotsize = this.options.dotsize ?? 4;
     const padding = this.options.padding ?? { top: dotsize, right: dotsize, bottom: dotsize, left: dotsize }
-    const scaleTickLength = this.options.scaleTickLength ?? 2;
+    const scaleTickLength = this.options.scaleTickLength ?? 4;
     return {
       padding,
       dotsize,
@@ -130,17 +130,22 @@ class Chart {
     context.beginPath();
     context.moveTo(graphLeftPad, padding.top);
     context.lineTo(graphLeftPad, padding.top + height);
-    context.lineTo(graphLeftPad + width, padding.top + height);
     context.stroke();
 
     const xsteps = width / (scales.xmax - scales.xmin);
     const ysteps = height / (scales.ymax - scales.ymin);
 
+    const yZero = padding.top + height + ysteps * Math.min(0, scales.ymin);
+    context.beginPath();
+    context.moveTo(graphLeftPad, yZero);
+    context.lineTo(graphLeftPad + width, yZero);
+    context.stroke();
+
     const { scaleTickLength } = this.getOptions();
     const startX = graphLeftPad - scaleTickLength;
     const endX = graphLeftPad + scaleTickLength;
     const yScaleCount = (scales.ymax - scales.ymin);
-    for (let i = scales.ymin + 1; i <= yScaleCount; i++) {
+    for (let i = 0; i <= yScaleCount; i++) {
       let y = padding.top + height - ysteps * i;
 
       context.beginPath();
@@ -148,22 +153,24 @@ class Chart {
       context.lineTo(endX, y);
       context.stroke();
 
-      const isFarFromLast = yScaleCount - i > 1
-      const isFirst = i == 1;
+      const isFarFromLast = Math.abs(yScaleCount - i) > 1;
+      const isFarFromFirst = i > 1;
+      const isFirst = i == 0;
       const isLast = i == yScaleCount;
 
+      const renderedI = i + scales.ymin;
       // every fifth tick is rendered, first and last are always rendered, 
       // second to last will not be rendered if it is too close to the last
-      if ((i % 5 == 0 && isFarFromLast) || isFirst || isLast) {
-        let text = `${i}`;
+      if ((renderedI % 5 == 0 && isFarFromLast && isFarFromFirst) || isFirst || isLast) {
+        let text = `${renderedI}`;
         let textWidth = context.measureText(text).width + textToScalePad;
-        context.strokeText(text, padding.left + maxTextWidth / 2 - textWidth / 2, y + maxTextHeight / 2);
+        context.strokeText(text, padding.left + maxTextWidth / 2 - textWidth / 2, y + (maxTextHeight - textToScalePad) / 2);
       }
     }
-    const startY = padding.top + height - scaleTickLength;
-    const endY = padding.top + height + scaleTickLength;
+    const startY = yZero - scaleTickLength;
+    const endY = yZero + scaleTickLength;
     const xScaleCount = (scales.xmax - scales.xmin);
-    for (let i = scales.xmin; i <= xScaleCount; i++) {
+    for (let i = scales.xmin + 1; i <= xScaleCount; i++) {
       let x = graphLeftPad + xsteps * i;
 
       context.beginPath();
@@ -171,9 +178,9 @@ class Chart {
       context.lineTo(x, endY);
       context.stroke();
 
-      let text = `${i}`;
+      let text = `${i + scales.xmin}`;
       let textWidth = context.measureText(text).width;
-      context.strokeText(text, x - textWidth / 2, padding.top + height + maxTextHeight + textToScalePad);
+      context.strokeText(text, x - textWidth / 2, yZero + maxTextHeight + textToScalePad);
     }
   }
   /**
@@ -212,6 +219,7 @@ class Chart {
         context.stroke();
       }
     }
+    context.save();
   }
 
   /**
