@@ -123,19 +123,20 @@ class Chart {
     maxTextWidth: number,
     maxTextHeight: number,
     padding: Sides,
-    textToScalePad: number
+    textToScalePad: number,
   ) {
+    const graphTopPad = padding.top + maxTextHeight;
     const graphLeftPad = padding.left + maxTextWidth;
-    context.strokeStyle = "white";
+    context.strokeStyle = context.fillStyle = "white";
     context.beginPath();
-    context.moveTo(graphLeftPad, padding.top);
-    context.lineTo(graphLeftPad, padding.top + height);
+    context.moveTo(graphLeftPad, graphTopPad);
+    context.lineTo(graphLeftPad, graphTopPad + height);
     context.stroke();
 
     const xsteps = width / (scales.xmax - scales.xmin);
     const ysteps = height / (scales.ymax - scales.ymin);
 
-    const yZero = padding.top + height + ysteps * Math.min(0, scales.ymin);
+    const yZero = graphTopPad + height + ysteps * Math.min(0, scales.ymin);
     context.beginPath();
     context.moveTo(graphLeftPad, yZero);
     context.lineTo(graphLeftPad + width, yZero);
@@ -146,7 +147,7 @@ class Chart {
     const endX = graphLeftPad + scaleTickLength;
     const yScaleCount = (scales.ymax - scales.ymin);
     for (let i = 0; i <= yScaleCount; i++) {
-      let y = padding.top + height - ysteps * i;
+      let y = graphTopPad + height - ysteps * i;
 
       context.beginPath();
       context.moveTo(startX, y);
@@ -164,7 +165,7 @@ class Chart {
       if ((renderedI % 5 == 0 && isFarFromLast && isFarFromFirst) || isFirst || isLast) {
         let text = `${renderedI}`;
         let textWidth = context.measureText(text).width + textToScalePad;
-        context.strokeText(text, padding.left + maxTextWidth / 2 - textWidth / 2, y + (maxTextHeight - textToScalePad) / 2);
+        context.fillText(text, padding.left + maxTextWidth / 2 - textWidth / 2, y + (maxTextHeight - textToScalePad) / 2);
       }
     }
     const startY = yZero - scaleTickLength;
@@ -180,7 +181,7 @@ class Chart {
 
       let text = `${i + scales.xmin}`;
       let textWidth = context.measureText(text).width;
-      context.strokeText(text, x - textWidth / 2, yZero + maxTextHeight + textToScalePad);
+      context.fillText(text, x - textWidth / 2, yZero + maxTextHeight + textToScalePad);
     }
   }
   /**
@@ -198,14 +199,15 @@ class Chart {
     width: number,
     height: number,
     scales: Scales,
-    graphPadding: Sides
+    graphPadding: Sides,
+    ratio: number,
   ) {
     const { dotsize } = this.getOptions();
 
     let data = dataset.data;
     let style = dataset.style;
     context.fillStyle = context.strokeStyle = style;
-    context.lineWidth = 2;
+    context.lineWidth = 2 * ratio;
     for (let j = 0; j < data.length; j++) {
       let { x, y } = this.calculatePoint(j, data[j], width, height, scales, graphPadding);
 
@@ -222,6 +224,22 @@ class Chart {
     context.save();
   }
 
+  private setupCanvas(element: HTMLCanvasElement): { context: CanvasRenderingContext2D, fullWidth: number, fullHeight: number, ratio: number } {
+    let ratio = Math.ceil(window.devicePixelRatio);
+    console.log(`Device Pixel Ratio: ${ratio}`);
+    const { width: styleWidth, height: styleHeight } = element.getBoundingClientRect();
+    const fullWidth = element.width = styleWidth * ratio;
+    const fullHeight = element.height = styleHeight * ratio;
+    console.log(`==> fullWidth: ${fullWidth}`);
+    console.log(`==> fullHeight: ${fullHeight}`);
+
+    let context = element.getContext("2d")!;
+    if (context == null)
+      throw `Could not get context of canvas`;
+
+    return { context, fullWidth, fullHeight, ratio };
+  }
+
   /**
    * Draw the chart on the given html canvas. 
    * This method will not resize the element, but it will set the elements resolution equal to its size.
@@ -229,37 +247,31 @@ class Chart {
    * @param element the html canvas element
    */
   public draw(element: HTMLCanvasElement) {
-    let context = element.getContext("2d");
-    if (context == null)
-      throw `Could not get context of canvas`;
+    const { context, fullWidth, fullHeight, ratio } = this.setupCanvas(element);
 
     const { padding, scaleTickLength } = this.getOptions();
 
-    // fix canvas resolution
-    const { width: fullWidth, height: fullHeight } = element.getBoundingClientRect();
-    element.width = fullWidth;
-    element.height = fullHeight;
-
+    context.font = `${10 * ratio}px Verdana`;
     const scales = this.calculateScales();
-    const textMetrics = context.measureText(`${scales.ymax}`);
+    const textMetrics = context.measureText(`${Math.max(Math.abs(scales.ymax), Math.abs(scales.ymin))}`);
     const textToScalePad = 4;
     const textWidth = textMetrics.width + scaleTickLength + textToScalePad;
     const textHeight = textMetrics.actualBoundingBoxAscent + textMetrics.actualBoundingBoxDescent + textToScalePad;
 
-    const width = fullWidth - padding.left - padding.right - textWidth;
-    const height = fullHeight - padding.top - padding.bottom - textHeight;
+    const width = fullWidth - padding.left - padding.right - textWidth * ratio;
+    const height = fullHeight - padding.top - padding.bottom - textHeight * ratio;
 
     this.drawScale(context, width, height, scales, textWidth, textHeight, padding, textToScalePad);
 
     const graphPadding = {
-      top: padding.top,
+      top: padding.top + textHeight,
       right: padding.right,
       bottom: padding.bottom,
       left: padding.left + textWidth
     };
 
     for (let i = 0; i < this.datasets.length; i++) {
-      this.drawDataset(context, this.datasets[i], width, height, scales, graphPadding);
+      this.drawDataset(context, this.datasets[i], width, height, scales, graphPadding, ratio);
     }
   }
 }
