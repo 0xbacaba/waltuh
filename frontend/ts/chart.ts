@@ -112,7 +112,7 @@ class Chart {
    * @param scales the x and y scales
    * @param maxTextWidth the maximum text width (includes [textToScalePad])
    * @param maxTextHeight the maximum text height (includes [textToScalePad])
-   * @param padding the padding in the graph area
+   * @param graphPadding the padding in the graph area
    * @param textToScalePad the padding of the text to the scale
   */
   private drawScale(
@@ -122,32 +122,36 @@ class Chart {
     scales: Scales,
     maxTextWidth: number,
     maxTextHeight: number,
-    padding: Sides,
+    graphPadding: Sides,
     textToScalePad: number,
   ) {
-    const graphTopPad = padding.top + maxTextHeight;
-    const graphLeftPad = padding.left + maxTextWidth;
+    let scalePadding = new Sides(
+      graphPadding.top - maxTextHeight,
+      graphPadding.right,
+      graphPadding.bottom,
+      graphPadding.left - maxTextWidth,
+    );
     context.strokeStyle = context.fillStyle = "white";
     context.beginPath();
-    context.moveTo(graphLeftPad, graphTopPad);
-    context.lineTo(graphLeftPad, graphTopPad + height);
+    context.moveTo(graphPadding.left, graphPadding.top);
+    context.lineTo(graphPadding.left, graphPadding.top + height);
     context.stroke();
 
     const xsteps = width / (scales.xmax - scales.xmin);
     const ysteps = height / (scales.ymax - scales.ymin);
 
-    const yZero = graphTopPad + height + ysteps * Math.min(0, scales.ymin);
+    const yZero = graphPadding.top + height + ysteps * Math.min(0, scales.ymin);
     context.beginPath();
-    context.moveTo(graphLeftPad, yZero);
-    context.lineTo(graphLeftPad + width, yZero);
+    context.moveTo(graphPadding.left, yZero);
+    context.lineTo(graphPadding.left + width, yZero);
     context.stroke();
 
     const { scaleTickLength } = this.getOptions();
-    const startX = graphLeftPad - scaleTickLength;
-    const endX = graphLeftPad + scaleTickLength;
+    const startX = graphPadding.left - scaleTickLength;
+    const endX = graphPadding.left + scaleTickLength;
     const yScaleCount = (scales.ymax - scales.ymin);
     for (let i = 0; i <= yScaleCount; i++) {
-      let y = graphTopPad + height - ysteps * i;
+      let y = graphPadding.top + height - ysteps * i;
 
       context.beginPath();
       context.moveTo(startX, y);
@@ -165,14 +169,14 @@ class Chart {
       if ((renderedI % 5 == 0 && isFarFromLast && isFarFromFirst) || isFirst || isLast) {
         let text = `${renderedI}`;
         let textWidth = context.measureText(text).width + textToScalePad;
-        context.fillText(text, padding.left + maxTextWidth / 2 - textWidth / 2, y + (maxTextHeight - textToScalePad) / 2);
+        context.fillText(text, scalePadding.left + maxTextWidth / 2 - textWidth / 2, y + (maxTextHeight - textToScalePad) / 2);
       }
     }
     const startY = yZero - scaleTickLength;
     const endY = yZero + scaleTickLength;
     const xScaleCount = (scales.xmax - scales.xmin);
     for (let i = scales.xmin + 1; i <= xScaleCount; i++) {
-      let x = graphLeftPad + xsteps * i;
+      let x = graphPadding.left + xsteps * i;
 
       context.beginPath();
       context.moveTo(x, startY);
@@ -261,7 +265,6 @@ class Chart {
     const width = fullWidth - padding.left - padding.right - textWidth * ratio;
     const height = fullHeight - padding.top - padding.bottom - textHeight * ratio;
 
-    this.drawScale(context, width, height, scales, textWidth, textHeight, padding, textToScalePad);
 
     const graphPadding = {
       top: padding.top + textHeight,
@@ -270,6 +273,7 @@ class Chart {
       left: padding.left + textWidth
     };
 
+    this.drawScale(context, width, height, scales, textWidth, textHeight, graphPadding, textToScalePad);
     for (let i = 0; i < this.datasets.length; i++) {
       this.drawDataset(context, this.datasets[i], width, height, scales, graphPadding, ratio);
     }
