@@ -117,3 +117,10 @@ function continue_pressed() {
       break;
   }
 }
+
+function save_chart() {
+  let a = document.createElement("a");
+  a.href = elements.chart.toDataURL("image/png").replace("image/png", "image/octet-stream");
+  a.download = "chart.png";
+  a.click();
+}

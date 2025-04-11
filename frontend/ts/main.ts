@@ -33,6 +33,7 @@ let elements: {
   continue_button: HTMLElement,
   coin_pile: HTMLElement,
   chart: HTMLCanvasElement,
+  chart_container: HTMLElement,
   add_player_button?: HTMLElement,
 };
 document.addEventListener("DOMContentLoaded", () => {
@@ -42,6 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
     continue_button: document.getElementById("continue-button")!,
     coin_pile: document.getElementById("coin-pile")!,
     chart: document.getElementById("chart") as HTMLCanvasElement,
+    chart_container: document.getElementById("chart-container")!,
   }
 
   switch_state(GameState.CREATING_PLAYERS);
@@ -131,7 +133,7 @@ function switch_state(new_state: GameState) {
       document.querySelectorAll("#player-list>.player").forEach(player => player.remove());
       elements.continue_button.style.opacity = "0";
 
-      elements.chart.classList.remove("chart-displayed");
+      elements.chart_container.classList.remove("chart-displayed");
 
       let add_button = create_player_add_button();
       elements.player_list.appendChild(add_button);
@@ -300,7 +302,7 @@ function displayChart() {
   }
 
   console.log(datasets);
-  elements.chart.classList.add("chart-displayed");
+  elements.chart_container.classList.add("chart-displayed");
   elements.buttons.classList.add("chart-displayed");
   let chart = new Chart(datasets, { padding: new Sides(10) });
   chart.draw(elements.chart);

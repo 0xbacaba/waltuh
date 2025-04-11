@@ -20,12 +20,34 @@
   opacity: 0;
 }
 
-#chart {
-  width: 80vw;
+#chart-container {
+  width: 100vw;
   height: 0;
   margin: 0 auto;
 
+  &>#chart {
+    width: 80vw;
+    margin: auto;
+  }
+
   &.chart-displayed {
     height: 40vh;
+
+    &>#save-chart {
+      height: auto;
+      width: min-content;
+      padding: .8vmin 1.3vmin;
+      font-size: 3vmin;
+      color: white;
+      background: #333;
+      border-radius: 1vmin;
+      margin: auto auto auto 0;
+    }
   }
+}
+#save-chart {
+  font-size: 0;
+  background: none;
+  height: 0;
+  border: none;
 }
