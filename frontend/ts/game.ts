@@ -7,14 +7,12 @@ class Game {
   private current_round: Round;
   private points: number[];
   private player_amount: number;
-  private starting_player: number;
 
   constructor(player_amount: number) {
     if(player_amount < MIN_PLAYERS)
       errorNotEnoughPlayers(player_amount);
     this.player_amount = player_amount;
-    this.starting_player = random(0, player_amount);
-    this.current_round = new Round(player_amount, 1);
+    this.current_round = new Round(player_amount, 1, random(0, player_amount));
     this.points = createArray<number>(player_amount, 0);
   }
 
@@ -35,9 +33,18 @@ class Game {
     let pointsChange = this.current_round.complete();
     this.points = this.points.map((points, index) => points + pointsChange[index]);
 
-    this.starting_player = (this.starting_player + 1) % this.player_amount;
     this.previous_rounds.push(this.current_round);
     this.current_round = this.current_round.nextRound();
+    return this.current_round.getCurrentRound();
+  }
+  public previousRound(): number {
+    let prev_round = this.previous_rounds.pop();
+    if(prev_round == null)
+      return -1;
+    let pointsChange = prev_round.getPoints();
+    this.points = this.points.map((points, index) => points - pointsChange[index])
+    this.current_round = prev_round;
+    
     return this.current_round.getCurrentRound();
   }
 
@@ -54,7 +61,7 @@ class Game {
     return this.current_round.getCurrentRound();;
   }
   public getStartingPlayer(): number {
-    return this.starting_player;
+    return this.current_round.getStartingPlayer();
   }
   public getPlayerAmount(): number {
     return this.player_amount;
@@ -67,13 +74,15 @@ class Round {
   private picked_coins: number[]
   private tricks_won: number[]
   private current_round: number = 1;
+  private starting_player: number;
 
-  public constructor(player_amount: number, current_round: number) {
+  public constructor(player_amount: number, current_round: number, starting_player: number) {
     this.player_amount = player_amount;
     this.current_round = current_round;
     this.points = createArray<number>(player_amount, 0);
     this.picked_coins = createArray<number>(player_amount, 0);
     this.tricks_won = createArray<number>(player_amount, 0);
+    this.starting_player = starting_player;
   }
 
   public pickedCoin(player: number): boolean {
@@ -135,9 +144,12 @@ class Round {
     return this.points;
   }
   public nextRound(): Round {
-    return new Round(this.player_amount, this.current_round + 1);
+    return new Round(this.player_amount, this.current_round + 1, (this.starting_player + 1) % this.player_amount);
   }
   public getCurrentRound(): number {
     return this.current_round;
+  }
+  public getStartingPlayer(): number {
+    return this.starting_player;
   }
 }
