@@ -48,6 +48,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   switch_state(GameState.CREATING_PLAYERS);
 });
+// double-click scoll workaround
+document.addEventListener("dblclick", (event) => event.preventDefault(), { passive: false });
 
 function add_player() {
   let player_count = elements.player_list?.children.length;
