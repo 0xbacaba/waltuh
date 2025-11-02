@@ -27,7 +27,7 @@
   }
 
   &.marked {
-    box-shadow: 0 0 .4vmin .4vmin #00a7a7;
+    box-shadow: 0 0 .4vmin .4vmin var(--selection-color);
   }
 }
 

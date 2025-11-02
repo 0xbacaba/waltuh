@@ -35,6 +35,8 @@ let elements: {
   chart: HTMLCanvasElement,
   chart_container: HTMLElement,
   add_player_button?: HTMLElement,
+  settings_container: HTMLElement,
+  settings_options: HTMLElement,
 };
 document.addEventListener("DOMContentLoaded", () => {
   elements = {
@@ -44,8 +46,11 @@ document.addEventListener("DOMContentLoaded", () => {
     coin_pile: document.getElementById("coin-pile")!,
     chart: document.getElementById("chart") as HTMLCanvasElement,
     chart_container: document.getElementById("chart-container")!,
+    settings_container: document.getElementById("settings-container")!,
+    settings_options: document.getElementById("settings-options")!,
   }
 
+  apply_selected_setting("points");
   switch_state(GameState.CREATING_PLAYERS);
 });
 // double-click scoll workaround
@@ -129,6 +134,7 @@ function switch_state(new_state: GameState) {
   switch (new_state) {
     case GameState.CREATING_PLAYERS:
       set_continue_button_text(DISPLAYED_TEXT.CONTINUE_BUTTON.START_GAME());
+      elements.settings_container.classList.remove("hidden");
 
       game = null;
 
@@ -147,6 +153,8 @@ function switch_state(new_state: GameState) {
         game = new Game(get_player_elements().length);
       else
         applyPoints();
+
+      elements.settings_container.classList.add("hidden");
 
       set_continue_button_text(DISPLAYED_TEXT.CONTINUE_BUTTON.START_ROUND(game.getCurrentRound()));
 

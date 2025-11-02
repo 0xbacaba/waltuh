@@ -1,0 +1,76 @@
+#settings-container {
+  position: absolute;
+  bottom: 5vmin;
+  left: 5vmin;
+  transition: var(--transitions);
+
+  &.hidden {
+    opacity: 0;
+  }
+}
+
+#settings-options {
+  font: 2vmin Arial;
+  margin-bottom: 2vmin;
+  background-color: #2B2A33;
+  border-radius: 1vmin;
+  overflow: hidden;
+  height: 8vmin;
+  max-height: 100%;
+  padding: 1vmin;
+  border: .2vmin solid white;
+  width: 20vmin;
+  transition: calc(var(--transitions) / 2);
+
+  &.hidden {
+    border-width: 0;
+    max-height: 0;
+    height: 0;
+    padding: 0 1vmin;
+
+    &>#points>input {
+      visibility: hidden;
+    }
+  }
+}
+
+#points {
+  &>input {
+    position: absolute;
+    opacity: 0;
+    margin: 0;
+    width: 13.5vmin;
+    height: 3vmin;
+  }
+
+  &>input:checked+label {
+    box-shadow: 0 0 .4vmin .4vmin var(--selection-color);
+    filter: brightness(100%);
+  }
+
+  &>label {
+    display: inline-block;
+    border: .1vmin solid white;
+    width: 12vmin;
+    height: 2.5vmin;
+    border-radius: 1vmin;
+    padding: .1vmin .75vmin;
+    margin: .1vmin auto;
+    transition: var(--transitions);
+    filter: brightness(75%);
+  }
+}
+
+#settings-button {
+  display: flex;
+  margin: 0;
+  width: 5vmin;
+  height: 5vmin;
+  border-radius: 100%;
+  border-width: .3vmin;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  font-size: 3vmin;
+  line-height: 1;
+}

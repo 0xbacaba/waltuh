@@ -3,6 +3,7 @@
   --player-size: 13vmin;
   --coin-size: 12vmin;
   --player-font-size: 3vmin;
+  --selection-color: #00a7a7;
 }
 
 body {

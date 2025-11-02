@@ -3,22 +3,24 @@
 
 <head>
   <meta charset="UTF-8">
-	<link rel="icon" type="image/x-icon" sizes="192x192" href="assets/waltuh.ico">
-	<link rel="apple-touch-icon" type="image/x-icon" sizes="192x192" href="assets/waltuh.ico">
-	<link rel="manifest" href="assets/webmanifest.json">
-	<meta name="apple-mobile-web-app-capable" content="yes" />
-	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="icon" type="image/x-icon" sizes="192x192" href="assets/waltuh.ico">
+  <link rel="apple-touch-icon" type="image/x-icon" sizes="192x192" href="assets/waltuh.ico">
+  <link rel="manifest" href="assets/webmanifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
   <title> Waltuh </title>
   <link href="css/style.css" rel="stylesheet">
   <link href="css/player.css" rel="stylesheet">
   <link href="css/coins.css" rel="stylesheet">
+  <link href="css/settings.css" rel="stylesheet">
   <link href="css/other.css" rel="stylesheet">
   <script type="text/javascript" src="js/main.js"></script>
   <script type="text/javascript" src="js/game.js"></script>
   <script type="text/javascript" src="js/interactive.js"></script>
   <script type="text/javascript" src="js/elements.js"></script>
+  <script type="text/javascript" src="js/settings.js"></script>
   <script type="text/javascript" src="js/chart.js"></script>
   <script type="text/javascript" src="js/errors.js"></script>
 </head>
@@ -40,6 +42,18 @@
     <div class="horizontal">
       <button id="continue-button" onclick="continue_pressed()"> ... </button>
     </div>
+  </div>
+  <div id="settings-container" class="vertical">
+    <div id="settings-options" class="hidden">
+      <div id="points">
+        <h4 style="margin: 0">Punkteberechnung: </h4>
+        <input type="radio" id="settings-points-official" name="points" value="points:official" onclick="setting_clicked(this)">
+        <label for="settings-points-official"> offiziell </label><br />
+        <input type="radio" id="settings-points-unofficial" name="points" value="points:unofficial" onclick="setting_clicked(this)" checked>
+        <label for="settings-points-unofficial"> inoffiziell </label><br />
+      </div>
+    </div>
+    <button id="settings-button" onclick="settings_button_pressed()"> &#x2699; </button>
   </div>
 </body>
 
