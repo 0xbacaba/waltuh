@@ -127,32 +127,7 @@ function settings_button_pressed() {
 
 function setting_clicked(element: HTMLInputElement) {
   let [path, value] = element.value.split(":")
-  let path_parts = path.split(".");
-  let setting: any = settings;
-  let values: any = settings_values;
-  let last_part: string = path_parts[0];
-  for (let i = 0; i < path_parts.length - 1; i++) {
-    last_part = path_parts[i];
-    values = values[path_parts[i]];
-    setting = setting[path_parts[i]];
-    if (values == null || values == undefined || setting == null || setting == undefined) {
-      console.error("invalid settings path:", path, "at", i);
-      return;
-    }
-  }
-  if (last_part == "") {
-    console.error("invalid/empty settings path:", path);
-    return;
-  }
-  let result = values[last_part][value];
-  if (result == null || result == undefined) {
-    console.error("invalid settings value:", value);
-    return;
-  }
-
-  setting[last_part] = result;
-  console.log("set setting", path, "to", value);
-  console.log(settings);
+  set_setting(path, value);
 }
 
 function save_chart() {

@@ -117,13 +117,10 @@ class Round {
     return true;
   }
 
-  private calculatePointsForPlayer(player: number) {
+  private calculatePointsForPlayer(player: number): number {
     let picked_coins = this.picked_coins[player];
     let tricks_won = this.tricks_won[player];
-    if(tricks_won == picked_coins)
-      return tricks_won + 2;
-    else
-      return tricks_won - Math.abs(tricks_won - picked_coins);
+    return settings.points(picked_coins, tricks_won);
   }
   public complete(): number[] {
     for(let i = 0; i < this.player_amount; i++) {
